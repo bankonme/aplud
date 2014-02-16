@@ -8,7 +8,7 @@
 #
 # Creates an APLUD from a given Debian-Live iso.
 #
-# It's possible to extend it to other distros through plugins (see *.conf)
+# It's possible to extend it to other distros through plugins serr README.md
 #
 # Requires : 7z syslinux mkfs.vfat mkfs.ext4 mbr fdisk
 # Debian : apt-get install 7zip-full syslinux dosfstools mbr util-linux
@@ -17,31 +17,46 @@
 # global.conf
 
 ######################## Don't touch this #####################################
-confdir="$(dirname $0)"
+confdir="$(dirname $0)/conf/"
+# defaults to a debian target
+defaulttargetconf=debian
 me="$(basename $0)"
-
-bootappend="lang=${LANG%%_*}"
-persistent_label="live-rw"
-syslinux_prefix="boot/"
-syslinuxcfg="syslinux.cfg"
-
-
-. $confdir/global.conf
-
+. $confdir/../global.conf
 isofile="$(realpath "$1")"	
 device="$2"
 live_device="$2"1
 persist_device="$2"2
+######################## /Don't touch this ####################################
 
-. $confdir/distro.conf
+# Getting proper distro configuration according to the argument given
+if test "$3" -a -r "$confdir/$3.conf"; then
+	. "$confdir/$3.conf"
+elif test "$3" -a ! -r "$confdir/$3.conf"; then 
+	echo "Plugin named '$3' not found."
+	echo "If there is no plugin for this distro, you may want to try"
+	echo "using 'generic' as plugin name"
+	exit
+else
+	. "$confdir/$defaulttargetconf".conf
+fi
 
 _help() {
-	echo "$me: create Automatically a Persistent Live Usb Debian"
+	echo "$me: create Automatically a Persistent Live Usb"
 	echo "from an ISOLINUX based live cd"
 	echo
-	echo "Syntax: $me debian<something>.iso /dev/sdX"
+	echo "Syntax: $me file.iso /dev/sdX [distro]"
 	echo
-	echo "See readme.mk for more detail"
+	echo Default distro is: $defaulttargetconf
+	echo 
+	echo "Available distros: "
+	echo
+	for conf in "$confdir"/*.conf; do
+		echo "* $(basename $conf .conf)"
+	done
+	echo
+	echo "If your distro isn't listed here, you should use 'generic'"
+	echo
+	echo "See README.md for more details."
 	exit
 }
 
@@ -187,7 +202,7 @@ _confirm_operation() {
 	read dummy
 }
 
-if test $# -ne 2; then 
+if test $# -lt 2; then 
 	_help
 elif test ! -r "$1"; then 
 	echo "Can't read $1 ! Exiting."
