@@ -132,6 +132,8 @@ to test.
 * ```myparam``` will be in the plugin file the value of the variable ```bootappend```
 * ```file.cfg``` will be in the plugin file the value of the variable ```syslinuxcfg```
 
+You'll need to know the boot options of the live cd you wan to use as well.
+
 ### Actual plugin creation ###
      
 Let's say you want to add the 'newdistro' distribution : 
