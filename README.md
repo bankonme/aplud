@@ -13,7 +13,7 @@ Usage
 Requires
 --------
 
-* 7z
+* 7z 
 * syslinux
 * mkfs.vfat
 * mkfs.ext4
@@ -63,7 +63,7 @@ Getting the good device
 Runtime Problems
 ----------------
 
-* Parted Failed 'device is busy' : Aplud tries hard to circumvent automounter programs. Anyway you should wait some seconds after plugging your USB pendrive, then launch aplud.
+* fdisk fails with 'device is busy' : Aplud tries hard to circumvent automounter programs. Anyway you should wait some seconds after plugging your USB pendrive, then launch aplud.
 
 * The resulting USB pendrive may be stuck with "MBR" message. Retry aplud on it. 
 
