@@ -33,7 +33,17 @@ device="$2"
 live_device="$2"1
 persist_device="$2"2
 
-. $confdir/distro.conf
+################################ Configuration ################################
+# 
+# Uncomment the target distro.
+# If you comment everything then the defaults used above will be used
+# but it may not work...
+
+. $confdir/debian.conf
+#. $confdir/grml.conf
+#. $confdir/slitaz4.conf
+
+############################# End of configuration ############################
 
 _help() {
 	echo "$me: create Automatically a Persistent Live Usb Debian"
