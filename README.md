@@ -27,10 +27,15 @@ Debian-based distro :
 About
 -----
 
-This creates a live, persistent USB drive, with Debian (by default), grml (you
-want ```grml2usb```), slitaz4 (home persistence only). It's similar to unetbootin, 
-but it's more minimalist and base code is less intimidating - it's just a 
-shell script.
+This creates a live, persistent USB drive with:
+
+* Debian (by default) 
+* grml (you want ```grml2usb```)
+* slitaz4 (home persistence only).
+* Any ISOLINUX based Live-CD (See 'Using Plugins'), it will then create an extra partition using the free space left on the device 
+ 
+It's similar to unetbootin, but it's minimalist and base code is less
+intimidating - it's just a shell script.
 
 It will use the size of the isofile + 10% for  the livesystem partition, the
 rest being used for persistence.
@@ -42,9 +47,6 @@ It works with a plugin system, so you can create a definition for other distros.
 
 The included plugins will try to set up the language and keyboard, so you should
 not have to be worried about this (it uses $LANG environment variable).
-
-It can create a live USB with an extra partition using the free space left on
-the device from any ISOLINUX based Live-CD (See 'Using Plugins')
 
 Getting the good device
 -----------------------
@@ -74,8 +76,9 @@ Using Plugins
 
 Edit 'distro.conf' and comment every entry but the one you want to use.
 
-You can comment everything. Then the default will be used. It will work
-only if the 'isolinux' directory is in the 'boot' directory.
+### Using unsupported distros ###
+You can comment everything, then the default will be used. It will work
+only if the 'isolinux' directory is in the 'boot' directory of the ISO.
 
 Then run alupd.
 
