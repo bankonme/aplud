@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Aplud : Automatic Persistent Live USB Debian" />
+    <meta name="description" content="Aplud : Automatic Persistent Live USB (Debian)" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/frwendling/aplud">View on GitHub</a>
 
           <h1 id="project_title">Aplud</h1>
-          <h2 id="project_tagline">Automatic Persistent Live USB Debian</h2>
+          <h2 id="project_tagline">Automatic Persistent Live USB (Debian)</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/frwendling/aplud/zipball/master">Download this project as a .zip file</a>
@@ -66,6 +66,9 @@ want <code>grml2usb</code>), slitaz4 (home persistence only). It's similar to un
 but it's more minimalist and base code is less intimidating - it's just a 
 shell script.</p>
 
+<p>It will use the size of the isofile + 10% for  the livesystem partition, the
+rest being used for persistence.</p>
+
 <p>Indeed there is <code>live-build</code>, but it's complicated when you just want the default
 image and make it persistent.</p>
 
@@ -74,7 +77,7 @@ image and make it persistent.</p>
 <p>The included plugins will try to set up the language and keyboard, so you should
 not have to be worried about this (it uses $LANG environment variable).</p>
 
-<p>It can create a live USB with an extra partition with the free space left on
+<p>It can create a live USB with an extra partition using the free space left on
 the device from any ISOLINUX based Live-CD (See 'Using Plugins')</p>
 
 <h2>
