@@ -171,6 +171,21 @@ _mount_persistent() {
 	mount "$persist_device" "$mntpnt" || return 1
 }
 
+_confirm_operation() {
+	if test ! "$target_distro"; then 
+		distro="Unknown"
+	else 
+		distro="$target_distro"
+	fi
+	_tell_user "$me will be executed with these parameters:"
+	echo
+	_tell_user "Device:     $device"
+	_tell_user "ISO file:   $isofile"
+	_tell_user "Distro:     $distro"
+	echo
+	_tell_user "Press enter to continue or Ctrl-C to quit."
+	read dummy
+}
 
 if test $# -ne 2; then 
 	_help
@@ -184,6 +199,7 @@ fi
 
 
 _is_root
+_confirm_operation
 _check_mountpoint 
 
 _tell_user "Unmounting everything related to $device ..."
