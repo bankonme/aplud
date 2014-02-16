@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Aplud : Automatic Persistent Live USB Debian" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Aplud</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/frwendling/aplud">View on GitHub</a>
+
+          <h1 id="project_title">Aplud</h1>
+          <h2 id="project_tagline">Automatic Persistent Live USB Debian</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/frwendling/aplud/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/frwendling/aplud/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="aplud" class="anchor" href="#aplud"><span class="octicon octicon-link"></span></a>aplud</h1>
+
+<p><strong><em>Automatic Persistent Live USB (Debian)</em></strong></p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<pre><code>$ wget -c http://live.debian.net/cdimage[...]debian-live-[...].iso
+# whereis/aplud debian-live.iso /dev/sdX
+</code></pre>
+
+<h2>
+<a name="requires" class="anchor" href="#requires"><span class="octicon octicon-link"></span></a>Requires</h2>
+
+<ul>
+<li>7z</li>
+<li>syslinux</li>
+<li>mkfs.vfat</li>
+<li>mkfs.ext4</li>
+<li>mbr</li>
+<li>fdisk</li>
+</ul><p>Debian-based distro : </p>
+
+<pre><code>apt-get install 7zip-full syslinux dosfstools mbr util-linux
+</code></pre>
+
+<h2>
+<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h2>
+
+<p>This creates a live, persistent USB drive, with Debian (by default), grml (you
+want <code>grml2usb</code>), slitaz4 (home persistence only). It's similar to unetbootin, 
+but it's more minimalist and base code is less intimidating - it's just a 
+shell script.</p>
+
+<p>Indeed there is <code>live-build</code>, but it's complicated when you just want the default
+image and make it persistent.</p>
+
+<p>It works with a plugin system, so you can create a definition for other distros.</p>
+
+<p>The included plugins will try to set up the language and keyboard, so you should
+not have to be worried about this (it uses $LANG environment variable).</p>
+
+<p>It can create a live USB with an extra partition with the free space left on
+the device from any ISOLINUX based Live-CD (See 'Using Plugins')</p>
+
+<h2>
+<a name="getting-the-good-device" class="anchor" href="#getting-the-good-device"><span class="octicon octicon-link"></span></a>Getting the good device</h2>
+
+<ul>
+<li>Plug your usb pendrive in your computer</li>
+<li>
+<p>Run</p>
+
+<pre><code>$ dmesg | tail
+[...]
+[ 5717.903243] sd 6:0:0:0: [sdb] Attached SCSI removable disk
+[...]
+</code></pre>
+</li>
+<li><p>Here the device is <code>/dev/sdb</code></p></li>
+</ul><h2>
+<a name="runtime-problems" class="anchor" href="#runtime-problems"><span class="octicon octicon-link"></span></a>Runtime Problems</h2>
+
+<ul>
+<li><p>Parted Failed 'device is busy' : Aplud tries hard to circumvent automounter programs. Anyway you should wait some seconds after plugging your USB pendrive, then launch aplud.</p></li>
+<li><p>The resulting USB pendrive may be stuck with "MBR" message. Retry aplud on it. </p></li>
+<li><p>If you have no mkfs.* programs on your system, modify global.conf accordingly.</p></li>
+</ul><h2>
+<a name="using-plugins" class="anchor" href="#using-plugins"><span class="octicon octicon-link"></span></a>Using Plugins</h2>
+
+<p>Edit 'distro.conf' and comment every entry but the one you want to use.</p>
+
+<p>You can comment everything. Then the default will be used. It will work
+only if the 'isolinux' directory is in the 'boot' directory.</p>
+
+<p>Then run alupd.</p>
+
+<h2>
+<a name="creating-plugins" class="anchor" href="#creating-plugins"><span class="octicon octicon-link"></span></a>Creating Plugins</h2>
+
+<p>Let's say you want to add the 'newdistro' distribution : </p>
+
+<pre><code>$ cd whereisaplud 
+$ cp grml.conf newdistro.conf
+$ echo '. $configdir/newdistro.conf' &gt;&gt; distro.conf 
+$ vi newdistro.conf
+</code></pre>
+
+<p>Instructions are inside the .conf file. </p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Aplud maintained by <a href="https://github.com/frwendling">frwendling</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
