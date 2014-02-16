@@ -1,0 +1,206 @@
+#!/bin/sh
+# Copyright 2014 François Wendling <frwendlingatfreedotfr> 
+# This software may be freely copied, modified, and redistributed, provided
+# that this copyright notice is preserved on all copies. There is no warranty.
+# Modified versions have to be marked as such.
+
+# APLUD : Automatic Persistent Live Usb Debian
+#
+# Creates an APLUD from a given Debian-Live iso.
+#
+# It's possible to extend it to other distros through plugins (see *.conf)
+#
+# Requires : 7z syslinux mkfs.vfat mkfs.ext4 mbr fdisk
+# Debian : apt-get install 7zip-full syslinux dosfstools mbr util-linux
+#
+# If mkfs.vfat and mkfs.ext4 have different names on your system, edit
+# global.conf
+
+######################## Don't touch this #####################################
+confdir="$(dirname $0)"
+me="$(basename $0)"
+
+bootappend="lang=${LANG%%_*}"
+persistent_label="live-rw"
+syslinux_prefix="boot/"
+syslinuxcfg="syslinux.cfg"
+
+
+. $confdir/global.conf
+
+isofile="$(realpath "$1")"	
+device="$2"
+live_device="$2"1
+persist_device="$2"2
+
+. $confdir/distro.conf
+
+_help() {
+	echo "$me: create Automatically a Persistent Live Usb Debian"
+	echo "from an ISOLINUX based live cd"
+	echo
+	echo "Syntax: $me debian<something>.iso /dev/sdX"
+	echo
+	echo "See readme.mk for more detail"
+	exit
+}
+
+_die() {
+	tput setf 4
+	echo "Fatal Error, Exiting."
+	tput op
+	exit
+}
+
+_tell_user() {
+	tput setf 2
+	echo "$1"
+	tput op
+}
+
+
+_check_mountpoint() {
+	if mountpoint "$mntpnt" > /dev/null 2>&1; then 
+		umount "$mntpnt" 
+	fi
+}
+
+_is_root() {
+	if test $(id -u) -ne 0; then 
+		echo "You must be root or use sudo to use this script."
+		exit
+	fi
+}
+
+_unmount_all_device() {
+	cd /
+	for device_file in "$device"*; do
+		umount $device_file > /dev/null 2>&1
+	done
+	return 0 # No dieing if last partition was not mounted
+}
+
+_partition_table() {
+	_tell_user "Calculating the livesystem partition size..."
+	{
+		# get the size in KBytes
+		livesize=$(expr $(stat -c '%s' "$isofile") / 1024)
+		# add 10%
+		livesize=$(expr $livesize + $livesize /  10)"K"
+	} || return 1
+	echo "Live partition will be created with size: $livesize"Bytes
+
+	_tell_user "Using fdisk to create the partition table..."
+	{
+		cat <<EOC | $fdisk "$device"
+o
+n
+p
+1
+
++$livesize
+a
+1
+n
+p
+
+
+
+w
+EOC
+	} || return 1
+}
+
+_automount_trick() {
+	_tell_user "Tricking automount by unmouting everything related to $device ..."
+	_unmount_all_device "$device"
+	return 0 # we don't want to die if it's not mounted anyway
+}
+
+_create_filesystems() {
+	_tell_user "Creating live filesystem on $live_device"
+	$mkfat "$live_device" || return 1
+	_automount_trick 
+	_tell_user "Creating persistent livesystem on $persist_device. This may be long."
+	$mkext "$persistent_label" "$persist_device"|| return 1
+	_automount_trick
+}
+
+_install_mbr() {
+	_tell_user "Creating MBR on $device"
+	$installmbr "$device" || return 1
+}
+
+_install_syslinux() {
+	_unmount_all_device
+	_tell_user "Installing syslinux on $live_device"
+	$syslinux "$live_device"
+}
+
+_extract_fix_iso() {
+	_tell_user "Extracting ISO to livepartition $live_device"
+	_check_mountpoint 
+	_mount_live || return 1
+	cd "$mntpnt"
+	$iso_uncompress "$isofile" || return 1
+	cd "$syslinux_prefix"
+	_tell_user "Converting ISOLINUX to SYSLINUX..."
+	{
+		mv isolinux syslinux
+		cd syslinux
+		mv isolinux.cfg syslinux.cfg
+		mv isolinux.bin syslinux.bin
+	} || return 1
+	_unmount_all_device 
+}	
+
+_set_persistent() {
+	_mount_live || return 1
+	_tell_user "Creating $target_distro boot cmdline..."
+	sed -i "s/\($appentrigger\)/\1 $bootappend/g" \
+		"$mntpnt/$syslinux_prefix/syslinux/$syslinuxcfg"
+	_tell_user "Unmounting everything related to $device ..."
+	_unmount_all_device
+	}
+	
+_mount_live() {
+	mount "$live_device" "$mntpnt" || return 1
+}
+
+_mount_persistent() {
+	mount "$persist_device" "$mntpnt" || return 1
+}
+
+
+if test $# -ne 2; then 
+	_help
+elif test ! -r "$1"; then 
+	echo "Can't read $1 ! Exiting."
+	exit
+elif test ! -e "$2"; then 
+	echo "Device $2 doesn't exists ! Exiting."
+	exit
+fi
+
+
+_is_root
+_check_mountpoint 
+
+_tell_user "Unmounting everything related to $device ..."
+_unmount_all_device 
+_partition_table || _die
+_create_filesystems || _die
+_install_mbr || _die
+
+_install_syslinux || _die
+_extract_fix_iso || _die
+if test "$target_distro"; then 
+	_tell_user "Setting up $target_distro-related things..."
+	_set_persistent 
+	_custom_actions
+fi
+
+_unmount_all_device
+rmdir "$mntpnt"
+
+_tell_user "Finished :-)"
