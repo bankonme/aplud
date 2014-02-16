@@ -32,6 +32,9 @@ want ```grml2usb```), slitaz4 (home persistence only). It's similar to unetbooti
 but it's more minimalist and base code is less intimidating - it's just a 
 shell script.
 
+It will use the size of the isofile + 10% for  the livesystem partition, the
+rest being used for persistence.
+
 Indeed there is ```live-build```, but it's complicated when you just want the default
 image and make it persistent.
 
@@ -40,7 +43,7 @@ It works with a plugin system, so you can create a definition for other distros.
 The included plugins will try to set up the language and keyboard, so you should
 not have to be worried about this (it uses $LANG environment variable).
 
-It can create a live USB with an extra partition with the free space left on
+It can create a live USB with an extra partition using the free space left on
 the device from any ISOLINUX based Live-CD (See 'Using Plugins')
 
 Getting the good device
