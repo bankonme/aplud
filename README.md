@@ -130,7 +130,7 @@ to test.
 
 * ```that common string``` will be in the plugin file the value of the variable ```appentrigger```
 * ```myparam``` will be in the plugin file the value of the variable ```bootappend```
-* ```file.cfg``` will be in the plugin file the value of the variable ```syslinuxcfg```
+* ```file.cfg``` will be in the plugin file the value of the variable ```syslinuxcfg``` If the file is ```isolinux.cfg``` then use ```syslinux.cfg``` instead
 
 You'll need to know the boot options of the live cd you wan to use as well.
 
