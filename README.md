@@ -34,6 +34,7 @@ This creates a live USB drive with:
 * debian (by default, full persistence) 
 * grml (you want ```grml2usb```, full persistence)
 * ubuntu (full persistence, *painfully slow*)
+* mint (full persistence)
 * slitaz4 (home persistence only).
 * Any ISOLINUX based Live-CD (See 'Using Plugins' for limitations), it will then create an extra partition using the free space left on the device. No persistence. It has been added for convenience, it works very often, but may not. 
  
