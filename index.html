@@ -69,6 +69,7 @@
 <li>debian (by default, full persistence) </li>
 <li>grml (you want <code>grml2usb</code>, full persistence)</li>
 <li>ubuntu (full persistence, <em>painfully slow</em>)</li>
+<li>mint (full persistence)</li>
 <li>slitaz4 (home persistence only).</li>
 <li>Any ISOLINUX based Live-CD (See 'Using Plugins' for limitations), it will then create an extra partition using the free space left on the device. No persistence. It has been added for convenience, it works very often, but may not. </li>
 </ul><p>It's similar to unetbootin, usb-creator etc., but it's minimalist and base code is less
@@ -180,8 +181,7 @@ then try this: </p>
 <code>myparam</code> will be in the plugin file the value of the variable <code>bootappend</code>
 </li>
 <li>
-<code>file.cfg</code> will be in the plugin file the value of the variable <code>syslinuxcfg</code>
-</li>
+<code>file.cfg</code> will be in the plugin file the value of the variable <code>syslinuxcfg</code> If the file is <code>isolinux.cfg</code> then use <code>syslinux.cfg</code> instead</li>
 </ul><p>You'll need to know the boot options of the live cd you wan to use as well.</p>
 
 <h3>
