@@ -8,7 +8,7 @@
 #
 # Creates an APLUD from a given Debian-Live iso.
 #
-# It's possible to extend it to other distros through plugins serr README.md
+# It's possible to extend it to other distros through plugins see README.md
 #
 # Requires : 7z syslinux mkfs.vfat mkfs.ext4 mbr fdisk
 # Debian : apt-get install 7zip-full syslinux dosfstools mbr util-linux
@@ -22,7 +22,7 @@ confdir="$(dirname $0)/conf/"
 defaulttargetconf=debian
 me="$(basename $0)"
 . $confdir/../global.conf
-isofile="$(realpath "$1")"	
+isofile="$(readlink -f "$1")"	
 device="$2"
 live_device="$2"1
 persist_device="$2"2
@@ -165,6 +165,17 @@ _extract_fix_iso() {
 		cd syslinux
 		mv isolinux.cfg syslinux.cfg
 		mv isolinux.bin syslinux.bin
+        # debian changed location of vesamenu since jessie and 
+        # need some other includes with syslinux 6.x and later.
+        # this should work for all versions.
+        vesamenu="/usr/lib/syslinux/vesamenu.c32" # wheezy and previous
+        if test ! -f "$vesamenu"; then  
+            # jessie or later we add everything because slitaz
+            # for example need ifmem.c32 and so on for other
+            # distros
+            vesamenu="/usr/lib/syslinux/modules/bios/"*
+        fi
+        cp $vesamenu  .
 	} || return 1
 	_unmount_all_device 
 }	
